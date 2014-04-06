@@ -82,7 +82,7 @@ class GameUI
 		@ctx.fillStyle = "rgba(#{color[0]},#{color[1]},#{color[2]},1)"
 		@ctx.font = font.toString()
 		@ctx.fillText txt, pos[0], pos[1]+font.height
-	draw: (dt) ->
+	draw: (running) ->
 		# Draw the background
 		@drawRect @screenRect,conf.world.bgcolor,yes
 		# Write the score
@@ -90,9 +90,13 @@ class GameUI
 		if @game.loose
 			@writeText 'You loose! Press space to try again', [100, 100]
 			return
+
 		@drawRect @game.hero, conf.hero.color, yes
 		@game.ennemies.forEach (enn) =>
 			@drawRect enn, [0|enn.speed[0]*255/150, 0|enn.speed[1]*255/150, 255], no
+		if running isnt true
+			@writeText 'Game paused. Press p to resume.', [100, 100]
+
 	refreshsize: ->
 		@screenRect = new Rectangle [0,0], [@canvas.width,@canvas.height]
 
@@ -170,6 +174,7 @@ class GameManager
 					@running = not @running
 					@lastTime = null
 					requestAnimationFrame @animate
+		window.onblur = => @running = no
 
 		requestAnimationFrame @animate
 	animate: (curTime) =>
@@ -177,7 +182,7 @@ class GameManager
 		dt = (curTime - @lastTime)/1000
 		@lastTime = curTime
 		@game.update dt
-		@gameui.draw dt
+		@gameui.draw @running
 		if @running
 			requestAnimationFrame @animate
 

@@ -178,7 +178,7 @@
       return this.ctx.fillText(txt, pos[0], pos[1] + font.height);
     };
 
-    GameUI.prototype.draw = function(dt) {
+    GameUI.prototype.draw = function(running) {
       this.drawRect(this.screenRect, conf.world.bgcolor, true);
       this.writeText("Score: " + this.game.score.current + " | Best : " + this.game.score.best, [0, 0]);
       if (this.game.loose) {
@@ -186,11 +186,14 @@
         return;
       }
       this.drawRect(this.game.hero, conf.hero.color, true);
-      return this.game.ennemies.forEach((function(_this) {
+      this.game.ennemies.forEach((function(_this) {
         return function(enn) {
           return _this.drawRect(enn, [0 | enn.speed[0] * 255 / 150, 0 | enn.speed[1] * 255 / 150, 255], false);
         };
       })(this));
+      if (running !== true) {
+        return this.writeText('Game paused. Press p to resume.', [100, 100]);
+      }
     };
 
     GameUI.prototype.refreshsize = function() {
@@ -305,6 +308,11 @@
           }
         };
       })(this));
+      window.onblur = (function(_this) {
+        return function() {
+          return _this.running = false;
+        };
+      })(this);
       requestAnimationFrame(this.animate);
     }
 
@@ -316,7 +324,7 @@
       dt = (curTime - this.lastTime) / 1000;
       this.lastTime = curTime;
       this.game.update(dt);
-      this.gameui.draw(dt);
+      this.gameui.draw(this.running);
       if (this.running) {
         return requestAnimationFrame(this.animate);
       }
