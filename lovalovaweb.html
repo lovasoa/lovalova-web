@@ -27,8 +27,10 @@ canvas {
 	<h1>Online Lovalova game</h1>
 	<canvas id='sidagang' width='800' height='600'>Yo browser be too old</canvas>
 	<script>
-	var canvas = document.getElementById('sidagang');
-	var game = new GameManager(canvas)
+var canvas = document.getElementById('sidagang');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+var game = new GameManager(canvas)
 	</script>
 	<p>Play with keyboard arrows</p>
 </body>
