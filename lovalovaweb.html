@@ -7,17 +7,18 @@
 	<script src='lovalova.js'></script>
 	<style>
 body {
-	background:black;
+	background:#fb1287;
 	color:white;
 	font-family:Arial;
-	margin:0;
+	margin:0; border:0;
+	width:800px;
+	height:600px;
 }
 h1 {
 	display:none;
 }
 canvas {
 	margin:0;
-	border: 1px solid white;
 }
 	</style>
 </head>
@@ -26,8 +27,10 @@ canvas {
 	<h1>Online Lovalova game</h1>
 	<canvas id='sidagang' width='800' height='600'>Yo browser be too old</canvas>
 	<script>
-	var canvas = document.getElementById('sidagang');
-	var game = new GameManager(canvas)
+var canvas = document.getElementById('sidagang');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+var game = new GameManager(canvas)
 	</script>
 	<p>Play with keyboard arrows</p>
 </body>
