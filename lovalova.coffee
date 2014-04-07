@@ -207,4 +207,9 @@ window.onkeyup   = (e) ->
 	e.preventDefault()
 	keyboard.pressed[String.fromCharCode (e.keyCode or e.key)] = false
 
+requestAnimationFrame = window.requestAnimationFrame or
+												window.mozRequestAnimationFrame or
+												window.webkitRequestAnimationFrame or
+												(fun) -> setTimeout fun, 10, Date.now()+10
+
 window.GameManager = GameManager
