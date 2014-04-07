@@ -107,12 +107,13 @@ class Game
 		@ennemies = new LinkedList
 		@loose = false
 		@hero = new AnimatedRectangle (x/2 for x in @screen), conf.hero.size
-		@timeStarted = Date.now()
+		@timeRunning = 0
 
 	update: (dt) ->
 		if @loose then return
 
-		@score.update (Date.now() - @timeStarted)/1000
+		@timeRunning += dt
+		@score.update @timeRunning
 
 		# Move the hero
 		directions = [['left','right'],['up', 'down']]

@@ -222,7 +222,7 @@
         }
         return _results;
       }).call(this), conf.hero.size);
-      this.timeStarted = Date.now();
+      this.timeRunning = 0;
     }
 
     Game.prototype.update = function(dt) {
@@ -230,7 +230,8 @@
       if (this.loose) {
         return;
       }
-      this.score.update((Date.now() - this.timeStarted) / 1000);
+      this.timeRunning += dt;
+      this.score.update(this.timeRunning);
       directions = [['left', 'right'], ['up', 'down']];
       impulsion = [0, 0];
       for (i = _i = 0; _i <= 1; i = ++_i) {
@@ -371,3 +372,5 @@
   window.GameManager = GameManager;
 
 }).call(this);
+
+//# sourceMappingURL=lovalova.map
