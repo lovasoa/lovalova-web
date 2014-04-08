@@ -261,11 +261,11 @@
         impulsion[i] -= conf.world.dry_friction * this.hero.speed[i];
         if (this.hero.pos[i] > this.screen[i] - this.hero.size[i]) {
           this.hero.pos[i] = this.screen[i] - this.hero.size[i];
-          this.hero.speed[i] *= -1;
+          this.hero.speed[i] = -Math.abs(this.hero.speed[i]);
         }
         if (this.hero.pos[i] < 0) {
           this.hero.pos[i] = 0;
-          this.hero.speed[i] *= -1;
+          this.hero.speed[i] = Math.abs(this.hero.speed[i]);
         }
         for (j = _j = 0; _j <= 1; j = ++_j) {
           if (keyboard.isCharCodeDown(keyboard.charCodes[directions[i][j]])) {

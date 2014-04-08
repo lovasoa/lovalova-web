@@ -135,11 +135,11 @@ class Game
 
 			if @hero.pos[i] > @screen[i] - @hero.size[i]
 				@hero.pos[i] = @screen[i] - @hero.size[i]
-				@hero.speed[i] *= -1
+				@hero.speed[i] = -Math.abs(@hero.speed[i])
 
 			if @hero.pos[i] < 0
 				@hero.pos[i] = 0
-				@hero.speed[i] *= -1
+				@hero.speed[i] = Math.abs(@hero.speed[i])
 
 			for j in [0..1]
 				if keyboard.isCharCodeDown keyboard.charCodes[directions[i][j]]
