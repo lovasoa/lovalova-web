@@ -92,8 +92,12 @@ class GameUI
 			return
 
 		@drawRect @game.hero, conf.hero.color, yes
-		@game.ennemies.forEach (enn) =>
+
+		node = {next:@game.ennemies.first}
+		while node = node.next
+			enn = node.value
 			@drawRect enn, [0|enn.speed[0]*255/150, 0|enn.speed[1]*255/150, 255], no
+
 		if running isnt true
 			@writeText 'Game paused. Press p to resume.', [100, 100]
 
@@ -149,8 +153,11 @@ class Game
 					newenn.size[n] = 20 + Math.random()*100
 					newenn.speed[1-n] = 50 + Math.random()*100
 			@ennemies.append newenn
+
 		# Move the ennemies
-		@ennemies.forEach (e, node) =>
+		node = {next:@ennemies.first}
+		while node = node.next
+			e = node.value
 			e.animate(dt)
 			if e.pos[0] > @screen[0] or e.pos[1] > @screen[1]
 				@ennemies.remove node

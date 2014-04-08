@@ -179,6 +179,7 @@
     };
 
     GameUI.prototype.draw = function(running) {
+      var enn, node;
       this.drawRect(this.screenRect, conf.world.bgcolor, true);
       this.writeText("Score: " + this.game.score.current + " | Best : " + this.game.score.best, [0, 0]);
       if (this.game.loose) {
@@ -186,11 +187,13 @@
         return;
       }
       this.drawRect(this.game.hero, conf.hero.color, true);
-      this.game.ennemies.forEach((function(_this) {
-        return function(enn) {
-          return _this.drawRect(enn, [0 | enn.speed[0] * 255 / 150, 0 | enn.speed[1] * 255 / 150, 255], false);
-        };
-      })(this));
+      node = {
+        next: this.game.ennemies.first
+      };
+      while (node = node.next) {
+        enn = node.value;
+        this.drawRect(enn, [0 | enn.speed[0] * 255 / 150, 0 | enn.speed[1] * 255 / 150, 255], false);
+      }
       if (running !== true) {
         return this.writeText('Game paused. Press p to resume.', [100, 100]);
       }
@@ -226,7 +229,7 @@
     }
 
     Game.prototype.update = function(dt) {
-      var accel, directions, dirfriction, horiz, i, impulsion, j, n, newenn, _i, _j, _k;
+      var accel, directions, dirfriction, e, horiz, i, impulsion, j, n, newenn, node, _i, _j, _k, _results;
       if (this.loose) {
         return;
       }
@@ -267,17 +270,23 @@
         }
         this.ennemies.append(newenn);
       }
-      return this.ennemies.forEach((function(_this) {
-        return function(e, node) {
-          e.animate(dt);
-          if (e.pos[0] > _this.screen[0] || e.pos[1] > _this.screen[1]) {
-            _this.ennemies.remove(node);
-          }
-          if (e.collision(_this.hero)) {
-            return _this.end();
-          }
-        };
-      })(this));
+      node = {
+        next: this.ennemies.first
+      };
+      _results = [];
+      while (node = node.next) {
+        e = node.value;
+        e.animate(dt);
+        if (e.pos[0] > this.screen[0] || e.pos[1] > this.screen[1]) {
+          this.ennemies.remove(node);
+        }
+        if (e.collision(this.hero)) {
+          _results.push(this.end());
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
     };
 
     Game.prototype.end = function() {
