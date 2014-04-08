@@ -74,29 +74,35 @@ class GameUI
 		@refreshsize()
 		@ctx = @canvas.getContext '2d'
 		@font = new Font 14, 'sans-serif'
-	drawRect: (rect, color=[0,0,0], fill) ->
-		mode = if fill then 'fill' else 'stroke'
-		@ctx[mode+'Style'] = "rgb(#{color[0]},#{color[1]},#{color[2]})"
-		@ctx[mode+'Rect'] rect.pos[0], rect.pos[1], rect.size[0], rect.size[1]
+	fillRect: (rect, color=[0,0,0]) -> # Faster than a generic drawrect function
+		strcolor = "rgb(#{color[0]},#{color[1]},#{color[2]})"
+		@ctx.fillStyle = strcolor if @ctx.fillStyle isnt strcolor
+		@ctx.fillRect 0|rect.pos[0], 0|rect.pos[1], 0|rect.size[0], 0|rect.size[1]
+	strokeRect: (rect, color=[0,0,0]) ->
+		strcolor = "rgb(#{color[0]},#{color[1]},#{color[2]})"
+		@ctx.strokeStyle = strcolor if @ctx.strokeStyle isnt strcolor
+		@ctx.strokeRect 0|rect.pos[0], 0|rect.pos[1], 0|rect.size[0], 0|rect.size[1]
 	writeText: (txt, pos, color=[255,255,255], font=@font) ->
 		@ctx.fillStyle = "rgba(#{color[0]},#{color[1]},#{color[2]},1)"
-		@ctx.font = font.toString()
+		strfont = font.toString()
+		@ctx.font = strfont if @ctx.font isnt strfont # Setting the font is costly. Avoid it when possible
 		@ctx.fillText txt, pos[0], pos[1]+font.height
 	draw: (running) ->
 		# Draw the background
-		@drawRect @screenRect,conf.world.bgcolor,yes
+		@fillRect @screenRect,conf.world.bgcolor
+
 		# Write the score
 		@writeText "Score: #{@game.score.current} | Best : #{@game.score.best}", [0, 0]
 		if @game.loose
 			@writeText 'You loose! Press space to try again', [100, 100]
 			return
 
-		@drawRect @game.hero, conf.hero.color, yes
+		@fillRect @game.hero, conf.hero.color
 
 		node = {next:@game.ennemies.first}
 		while node = node.next
 			enn = node.value
-			@drawRect enn, [0|enn.speed[0]*255/150, 0|enn.speed[1]*255/150, 255], no
+			@strokeRect enn, [0|enn.speed[0]*255/150, 0|enn.speed[1]*255/150, 255]
 
 		if running isnt true
 			@writeText 'Game paused. Press p to resume.', [100, 100]

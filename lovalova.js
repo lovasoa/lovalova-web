@@ -156,17 +156,32 @@
       this.font = new Font(14, 'sans-serif');
     }
 
-    GameUI.prototype.drawRect = function(rect, color, fill) {
-      var mode;
+    GameUI.prototype.fillRect = function(rect, color) {
+      var strcolor;
       if (color == null) {
         color = [0, 0, 0];
       }
-      mode = fill ? 'fill' : 'stroke';
-      this.ctx[mode + 'Style'] = "rgb(" + color[0] + "," + color[1] + "," + color[2] + ")";
-      return this.ctx[mode + 'Rect'](rect.pos[0], rect.pos[1], rect.size[0], rect.size[1]);
+      strcolor = "rgb(" + color[0] + "," + color[1] + "," + color[2] + ")";
+      if (this.ctx.fillStyle !== strcolor) {
+        this.ctx.fillStyle = strcolor;
+      }
+      return this.ctx.fillRect(0 | rect.pos[0], 0 | rect.pos[1], 0 | rect.size[0], 0 | rect.size[1]);
+    };
+
+    GameUI.prototype.strokeRect = function(rect, color) {
+      var strcolor;
+      if (color == null) {
+        color = [0, 0, 0];
+      }
+      strcolor = "rgb(" + color[0] + "," + color[1] + "," + color[2] + ")";
+      if (this.ctx.strokeStyle !== strcolor) {
+        this.ctx.strokeStyle = strcolor;
+      }
+      return this.ctx.strokeRect(0 | rect.pos[0], 0 | rect.pos[1], 0 | rect.size[0], 0 | rect.size[1]);
     };
 
     GameUI.prototype.writeText = function(txt, pos, color, font) {
+      var strfont;
       if (color == null) {
         color = [255, 255, 255];
       }
@@ -174,25 +189,28 @@
         font = this.font;
       }
       this.ctx.fillStyle = "rgba(" + color[0] + "," + color[1] + "," + color[2] + ",1)";
-      this.ctx.font = font.toString();
+      strfont = font.toString();
+      if (this.ctx.font !== strfont) {
+        this.ctx.font = strfont;
+      }
       return this.ctx.fillText(txt, pos[0], pos[1] + font.height);
     };
 
     GameUI.prototype.draw = function(running) {
       var enn, node;
-      this.drawRect(this.screenRect, conf.world.bgcolor, true);
+      this.fillRect(this.screenRect, conf.world.bgcolor);
       this.writeText("Score: " + this.game.score.current + " | Best : " + this.game.score.best, [0, 0]);
       if (this.game.loose) {
         this.writeText('You loose! Press space to try again', [100, 100]);
         return;
       }
-      this.drawRect(this.game.hero, conf.hero.color, true);
+      this.fillRect(this.game.hero, conf.hero.color);
       node = {
         next: this.game.ennemies.first
       };
       while (node = node.next) {
         enn = node.value;
-        this.drawRect(enn, [0 | enn.speed[0] * 255 / 150, 0 | enn.speed[1] * 255 / 150, 255], false);
+        this.strokeRect(enn, [0 | enn.speed[0] * 255 / 150, 0 | enn.speed[1] * 255 / 150, 255]);
       }
       if (running !== true) {
         return this.writeText('Game paused. Press p to resume.', [100, 100]);
